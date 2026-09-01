@@ -1,0 +1,304 @@
+{
+  "vocab_size": 512,
+  "ctc_loss_reduction": "mean",
+  "ctc_zero_infinity": true,
+  "encoder_config": {
+    "rope_parameters": {
+      "rope_theta": 10000.0,
+      "rope_type": "default"
+    },
+    "layer_norm_eps": 1e-06,
+    "feed_forward_residual_weights": [
+      1.5,
+      0.5
+    ],
+    "conv_residual_weights": [
+      2.0,
+      1.0
+    ],
+    "batch_norm_momentum": 0.01,
+    "hidden_size": 512,
+    "num_hidden_layers": 17,
+    "num_attention_heads": 8,
+    "num_key_value_heads": 8,
+    "intermediate_size": 2048,
+    "hidden_act": "silu",
+    "attention_bias": false,
+    "convolution_bias": false,
+    "conv_kernel_size": 32,
+    "subsampling_conv_kernel_size": 5,
+    "subsampling_conv_stride": 2,
+    "subsampling_conv_channels": 256,
+    "num_mel_bins": 128,
+    "dropout": 0.1,
+    "dropout_positions": 0.0,
+    "layerdrop": 0.1,
+    "activation_dropout": 0.1,
+    "attention_dropout": 0.1,
+    "max_position_embeddings": 10000,
+    "initializer_range": 0.02,
+    "return_dict": true,
+    "output_hidden_states": false,
+    "dtype": null,
+    "tie_word_embeddings": true,
+    "chunk_size_feed_forward": 0,
+    "is_encoder_decoder": false,
+    "is_decoder": false,
+    "cross_attention_hidden_size": null,
+    "add_cross_attention": false,
+    "tie_encoder_decoder": false,
+    "architectures": ["LasrForCTC"],
+    "finetuning_task": null,
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "task_specific_params": null,
+    "problem_type": null,
+    "tokenizer_class": null,
+    "prefix": null,
+    "bos_token_id": null,
+    "pad_token_id": null,
+    "eos_token_id": null,
+    "sep_token_id": null,
+    "decoder_start_token_id": null,
+    "_name_or_path": "",
+    "model_type": "lasr_encoder",
+    "output_attentions": false
+  },
+  "initializer_range": 0.02,
+  "return_dict": true,
+  "output_hidden_states": false,
+  "dtype": "float32",
+  "tie_word_embeddings": true,
+  "chunk_size_feed_forward": 0,
+  "is_encoder_decoder": false,
+  "is_decoder": false,
+  "cross_attention_hidden_size": null,
+  "add_cross_attention": false,
+  "tie_encoder_decoder": false,
+  "architectures": ["LasrForCTC"],
+  "finetuning_task": null,
+  "id2label": {
+    "0": "LABEL_0",
+    "1": "LABEL_1"
+  },
+  "label2id": {
+    "LABEL_0": 0,
+    "LABEL_1": 1
+  },
+  "task_specific_params": null,
+  "problem_type": null,
+  "tokenizer_class": null,
+  "prefix": null,
+  "bos_token_id": null,
+  "pad_token_id": 0,
+  "eos_token_id": null,
+  "sep_token_id": null,
+  "decoder_start_token_id": null,
+  "_name_or_path": "google/medasr",
+  "transformers_version": "5.0.0.dev0",
+  "model_type": "lasr_ctc",
+  "output_attentions": false,
+  "_conversion": {
+    "source_model_id": "google/medasr",
+    "timestamp_utc": "2026-02-09T18:36:08.983149+00:00",
+    "weights_dtype": "float16",
+    "converter": "convert.py",
+    "weight_layout_notes": {
+      "linear": "unchanged (out_features, in_features)",
+      "conv1d": "transposed from torch [out, in, kernel] to mlx [out, kernel, in]",
+      "skipped": [
+        "*.num_batches_tracked"
+      ]
+    }
+  },
+  "_cache": {
+    "attention": {
+      "hidden_size": 512,
+      "num_heads": 8,
+      "head_dim": 64,
+      "is_causal": false,
+      "scaling": 0.125
+    },
+    "convolution": {
+      "num_layers": 17,
+      "depthwise": [
+        {
+          "layer": 0,
+          "name": "encoder.layers.0.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 1,
+          "name": "encoder.layers.1.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 2,
+          "name": "encoder.layers.2.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 3,
+          "name": "encoder.layers.3.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 4,
+          "name": "encoder.layers.4.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 5,
+          "name": "encoder.layers.5.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 6,
+          "name": "encoder.layers.6.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 7,
+          "name": "encoder.layers.7.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 8,
+          "name": "encoder.layers.8.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 9,
+          "name": "encoder.layers.9.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 10,
+          "name": "encoder.layers.10.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 11,
+          "name": "encoder.layers.11.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 12,
+          "name": "encoder.layers.12.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 13,
+          "name": "encoder.layers.13.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 14,
+          "name": "encoder.layers.14.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 15,
+          "name": "encoder.layers.15.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        },
+        {
+          "layer": 16,
+          "name": "encoder.layers.16.conv.depthwise_conv",
+          "kernel_size": 32,
+          "cache_size_frames": 31,
+          "padding": "same",
+          "appears_causal": false
+        }
+      ]
+    },
+    "subsampling": {
+      "convs": [
+        {
+          "name": "encoder.subsampler.conv_0",
+          "stride": 2,
+          "kernel_size": 5
+        },
+        {
+          "name": "encoder.subsampler.conv_1",
+          "stride": 2,
+          "kernel_size": 5
+        }
+      ],
+      "estimated_factor": 4
+    },
+    "positional_encoding": {
+      "type": "LasrEncoderRotaryEmbedding",
+      "max_seq_len_cached": 10000,
+      "inv_freq_shape": [
+        32
+      ]
+    }
+  },
+  "_audio": {
+    "feature_size": 128,
+    "sampling_rate": 16000,
+    "padding_value": 0.0,
+    "padding_side": "right",
+    "return_attention_mask": true,
+    "_processor_class": "LasrProcessor",
+    "feature_extractor_type": "LasrFeatureExtractor",
+    "hop_length": 160,
+    "n_fft": 512,
+    "win_length": 400
+  }
+}

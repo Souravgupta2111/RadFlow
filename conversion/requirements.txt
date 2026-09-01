@@ -1,0 +1,14 @@
+# MedASR → Core ML conversion requirements
+# Python 3.10+ recommended
+
+# transformers 5.0.0+ required for LasrForCTC / google/medasr
+# Install from git until 5.x is on PyPI:
+git+https://github.com/huggingface/transformers.git@65dc261512cbdb1ee72b88ae5b222f2605aad8e5
+
+torch>=2.9.0
+torchaudio>=2.9.0
+coremltools>=8.1
+huggingface-hub>=0.22.0
+sentencepiece>=0.1.99
+numpy>=1.24.0
+librosa>=0.10.0

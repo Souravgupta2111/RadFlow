@@ -1,0 +1,113 @@
+name: Build & Release Desktop Bridge
+
+on:
+  push:
+    tags:
+      - 'desktop-v*'   # Push a tag like desktop-v1.0.0 to trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-mac:
+    name: Build macOS Universal
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller zeroconf pyautogui pyperclip
+
+    - name: Build macOS App (Universal Binary)
+      run: |
+        pyinstaller --noconfirm --onedir --windowed \
+          --name "Radflow Desktop" \
+          --target-architecture universal2 \
+          --clean \
+          scripts/ledis_desktop_bridge.py
+        
+        cd dist
+        zip -r "../Radflow-Desktop-Mac.zip" "Radflow Desktop.app"
+
+    - name: Upload Mac Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Radflow-Desktop-Mac
+        path: Radflow-Desktop-Mac.zip
+
+  build-windows:
+    name: Build Windows Exe
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller zeroconf pyautogui pyperclip
+
+    - name: Build Windows Exe
+      run: |
+        pyinstaller --noconfirm --onefile --windowed --name "Radflow-Desktop" --clean scripts\ledis_desktop_bridge.py
+
+    - name: Upload Windows Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Radflow-Desktop-Windows
+        path: dist/Radflow-Desktop.exe
+
+  release:
+    name: Create GitHub Release
+    needs: [build-mac, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Mac Build
+      uses: actions/download-artifact@v4
+      with:
+        name: Radflow-Desktop-Mac
+        path: release-assets/
+
+    - name: Download Windows Build
+      uses: actions/download-artifact@v4
+      with:
+        name: Radflow-Desktop-Windows
+        path: release-assets/
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: "Radflow Desktop Bridge ${{ github.ref_name }}"
+        body: |
+          ## Radflow Desktop Bridge
+          
+          Companion app for the Radflow iOS Wireless Mic feature.
+          
+          ### Download
+          - **Mac (Intel + Apple Silicon):** `Radflow-Desktop-Mac.zip` — Unzip and double-click to run.
+          - **Windows:** `Radflow-Desktop.exe` — Double-click to run. No installation needed.
+          
+          ### First-time setup
+          1. Download and open the app on your computer.
+          2. **macOS only:** Grant Accessibility permission in System Settings → Privacy & Security → Accessibility.
+          3. Open the Radflow iOS app → Wireless Mic tab → your computer appears automatically.
+          4. Tap Connect, then tap the mic and speak. Your words type at the cursor on your desktop.
+        files: |
+          release-assets/Radflow-Desktop-Mac.zip
+          release-assets/Radflow-Desktop.exe
+        draft: false
+        prerelease: false
