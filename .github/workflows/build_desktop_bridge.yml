@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-mac:
-    name: Build macOS Universal
+    name: Build macOS App
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
@@ -26,16 +26,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller zeroconf pyautogui pyperclip
 
-    - name: Build macOS App (Universal Binary)
+    - name: Build macOS App
       run: |
-        pyinstaller --noconfirm --onedir --windowed \
-          --name "Radflow Desktop" \
-          --target-architecture universal2 \
+        pyinstaller --noconfirm --onefile --windowed \
+          --name "Radflow-Desktop" \
           --clean \
           scripts/ledis_desktop_bridge.py
         
         cd dist
-        zip -r "../Radflow-Desktop-Mac.zip" "Radflow Desktop.app"
+        zip -r "../Radflow-Desktop-Mac.zip" "Radflow-Desktop"
 
     - name: Upload Mac Artifact
       uses: actions/upload-artifact@v4
@@ -98,7 +97,7 @@ jobs:
           Companion app for the Radflow iOS Wireless Mic feature.
           
           ### Download
-          - **Mac (Intel + Apple Silicon):** `Radflow-Desktop-Mac.zip` — Unzip and double-click to run.
+          - **Mac:** `Radflow-Desktop-Mac.zip` — Unzip and double-click to run.
           - **Windows:** `Radflow-Desktop.exe` — Double-click to run. No installation needed.
           
           ### First-time setup
