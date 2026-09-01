@@ -119,7 +119,7 @@ struct WirelessRemoteView: View {
                                 // Download buttons
                                 HStack(spacing: 12) {
                                     Button {
-                                        if let url = URL(string: "https://github.com/Souravgupta2111/RadFlow/releases/latest/download/Radflow-Desktop-Mac.zip") {
+                                        if let url = URL(string: "https://github.com/Souravgupta2111/RadFlow-Bridge/releases/latest/download/Radflow-Desktop-Mac.zip") {
                                             UIApplication.shared.open(url)
                                         }
                                     } label: {
@@ -135,7 +135,7 @@ struct WirelessRemoteView: View {
                                     .buttonStyle(.plain)
                                     
                                     Button {
-                                        if let url = URL(string: "https://github.com/Souravgupta2111/RadFlow/releases/latest/download/Radflow-Desktop.exe") {
+                                        if let url = URL(string: "https://github.com/Souravgupta2111/RadFlow-Bridge/releases/latest/download/Radflow-Desktop.exe") {
                                             UIApplication.shared.open(url)
                                         }
                                     } label: {
