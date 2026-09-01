@@ -25,3 +25,4 @@ dist/
 output/
 vendor/
 .build/
+*.ipa

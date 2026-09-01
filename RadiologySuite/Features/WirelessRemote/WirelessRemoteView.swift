@@ -77,7 +77,7 @@ struct WirelessRemoteView: View {
     // MARK: - Discovery
 
     private var discoveryView: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 16) {
             if case .error(let message) = conn.state {
                 errorTile(message)
             }
@@ -85,9 +85,9 @@ struct WirelessRemoteView: View {
             if conn.discovered.isEmpty {
                 // Setup guide tile
                 Tile {
-                    VStack(spacing: 18) {
+                    VStack(spacing: 20) {
                         // Searching indicator
-                        HStack(spacing: 10) {
+                        HStack(spacing: 12) {
                             if conn.isBrowsing {
                                 ProgressView().tint(DS.coral)
                             } else {
@@ -96,7 +96,7 @@ struct WirelessRemoteView: View {
                                     .foregroundStyle(DS.subAdaptive)
                             }
                             Text(conn.isBrowsing ? "Searching for desktops…" : "No desktops found")
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(.system(size: 16, weight: .semibold))
                                 .foregroundStyle(DS.inkAdaptive)
                             Spacer()
                         }
@@ -104,49 +104,53 @@ struct WirelessRemoteView: View {
                         Divider()
                         
                         // Setup steps
-                        VStack(alignment: .leading, spacing: 14) {
+                        VStack(alignment: .leading, spacing: 20) {
                             Text("FIRST-TIME SETUP")
-                                .font(.system(size: 11, weight: .bold))
-                                .tracking(1.0)
+                                .font(.system(size: 12, weight: .bold))
+                                .tracking(1.2)
                                 .foregroundStyle(DS.subAdaptive)
+                                .padding(.bottom, -4)
                             
-                            setupStep(number: "1", icon: "arrow.down.circle.fill",
-                                      title: "Install Radflow Desktop Bridge",
-                                      subtitle: "A lightweight app that runs silently in the background on your computer.")
-                            
-                            // Download buttons
-                            HStack(spacing: 12) {
-                                Button {
-                                    if let url = URL(string: "https://github.com/Souravgupta2111/RadFlow/releases/latest/download/Radflow-Desktop-Mac.zip") {
-                                        UIApplication.shared.open(url)
-                                    }
-                                } label: {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "apple.logo")
-                                        Text("Mac")
-                                            .font(.system(size: 14, weight: .bold))
-                                    }
-                                    .foregroundStyle(.white)
-                                    .frame(maxWidth: .infinity, minHeight: 46)
-                                    .background(RoundedRectangle(cornerRadius: 12).fill(DS.coralGradient()))
-                                }
-                                .buttonStyle(.plain)
+                            VStack(alignment: .leading, spacing: 14) {
+                                setupStep(number: "1", icon: "arrow.down.circle.fill",
+                                          title: "Install Radflow Desktop Bridge",
+                                          subtitle: "A lightweight app that runs silently in the background on your computer.")
                                 
-                                Button {
-                                    if let url = URL(string: "https://github.com/Souravgupta2111/RadFlow/releases/latest/download/Radflow-Desktop.exe") {
-                                        UIApplication.shared.open(url)
+                                // Download buttons
+                                HStack(spacing: 12) {
+                                    Button {
+                                        if let url = URL(string: "https://github.com/Souravgupta2111/RadFlow/releases/latest/download/Radflow-Desktop-Mac.zip") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    } label: {
+                                        HStack(spacing: 6) {
+                                            Image(systemName: "apple.logo")
+                                            Text("Mac")
+                                                .font(.system(size: 14, weight: .bold))
+                                        }
+                                        .foregroundStyle(.white)
+                                        .frame(maxWidth: .infinity, minHeight: 46)
+                                        .background(RoundedRectangle(cornerRadius: 12).fill(DS.coralGradient()))
                                     }
-                                } label: {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "window")
-                                        Text("Windows")
-                                            .font(.system(size: 14, weight: .bold))
+                                    .buttonStyle(.plain)
+                                    
+                                    Button {
+                                        if let url = URL(string: "https://github.com/Souravgupta2111/RadFlow/releases/latest/download/Radflow-Desktop.exe") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    } label: {
+                                        HStack(spacing: 6) {
+                                            Image(systemName: "window")
+                                            Text("Windows")
+                                                .font(.system(size: 14, weight: .bold))
+                                        }
+                                        .foregroundStyle(.white)
+                                        .frame(maxWidth: .infinity, minHeight: 46)
+                                        .background(RoundedRectangle(cornerRadius: 12).fill(DS.coralGradient()))
                                     }
-                                    .foregroundStyle(.white)
-                                    .frame(maxWidth: .infinity, minHeight: 46)
-                                    .background(RoundedRectangle(cornerRadius: 12).fill(DS.coralGradient()))
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
+                                .padding(.leading, 44) // Aligns with the text of step 1
                             }
                             
                             setupStep(number: "2", icon: "desktopcomputer",
@@ -162,17 +166,19 @@ struct WirelessRemoteView: View {
                 
                 // macOS permission note
                 Tile {
-                    HStack(alignment: .top, spacing: 10) {
+                    HStack(alignment: .top, spacing: 12) {
                         Image(systemName: "lock.shield.fill")
-                            .font(.system(size: 16))
+                            .font(.system(size: 18))
                             .foregroundStyle(DS.coral)
-                        VStack(alignment: .leading, spacing: 4) {
+                            .padding(.top, 2)
+                        VStack(alignment: .leading, spacing: 6) {
                             Text("macOS Users")
-                                .font(.system(size: 13, weight: .bold))
+                                .font(.system(size: 14, weight: .bold))
                                 .foregroundStyle(DS.inkAdaptive)
                             Text("Grant Accessibility permission to Radflow Desktop in System Settings → Privacy & Security → Accessibility so it can type at your cursor.")
-                                .font(.system(size: 12))
+                                .font(.system(size: 13))
                                 .foregroundStyle(DS.subAdaptive)
+                                .lineSpacing(2)
                         }
                     }
                 }
@@ -195,15 +201,17 @@ struct WirelessRemoteView: View {
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(DS.coral)
             }
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(DS.inkAdaptive)
                 Text(subtitle)
-                    .font(.system(size: 12))
+                    .font(.system(size: 13))
                     .foregroundStyle(DS.subAdaptive)
+                    .lineSpacing(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            .padding(.top, 4)
         }
     }
 

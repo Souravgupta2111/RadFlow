@@ -1,0 +1,9 @@
+{
+  "id" : "927cff19-b4dd-4557-9c92-f2c8f21b6aa9",
+  "targets" : [
+    {
+      "id" : "fc890a06-18d3-4315-9671-894f97a6d9e2",
+      "name" : "RadiologySuite"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import Foundation
 import AuthenticationServices
 import SwiftUI
+import SwiftData
 
 /// Lightweight Supabase-backed auth service using Sign in with Apple + REST API.
 @MainActor
@@ -159,7 +160,7 @@ final class AuthService: NSObject, ObservableObject {
     // MARK: - Delete Account
 
     func deleteAccount() async -> Bool {
-        guard let token = accessToken, let uid = userId else {
+        guard let token = accessToken, userId != nil else {
             errorMessage = "Not signed in."
             return false
         }
