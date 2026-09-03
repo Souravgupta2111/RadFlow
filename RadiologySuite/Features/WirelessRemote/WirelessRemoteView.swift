@@ -231,7 +231,7 @@ struct WirelessRemoteView: View {
                         Text(machine.name)
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(DS.inkAdaptive)
-                        Text("LEDIS Bridge · same Wi-Fi")
+                        Text("RadFlow Bridge · same Wi-Fi")
                             .font(.system(size: 12))
                             .foregroundStyle(DS.subAdaptive)
                     }
@@ -403,7 +403,7 @@ struct WirelessRemoteView: View {
                     .foregroundStyle(DS.inkAdaptive)
                 infoRow("wifi", "Stays on your local Wi-Fi — nothing leaves the network.")
                 infoRow("mic.fill", "Tap mic once and speak. Chunks type at the cursor live.")
-                infoRow("arrow.triangle.2.circlepath", "If the desktop drops, LEDIS reconnects on its own.")
+                infoRow("arrow.triangle.2.circlepath", "If the desktop drops, RadFlow reconnects on its own.")
             }
         }
     }

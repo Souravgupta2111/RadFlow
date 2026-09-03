@@ -36,7 +36,7 @@
 		<string>_ledis._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>LEDIS finds and connects to your desktop on the local Wi-Fi to type dictated text at the cursor.</string>
+	<string>RadFlow finds and connects to your desktop on the local Wi-Fi to type dictated text at the cursor.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is used to dictate radiology reports.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

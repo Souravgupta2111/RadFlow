@@ -17,7 +17,7 @@ struct DiscoveredMachine: Identifiable, Hashable {
     let endpoint: NWEndpoint
 }
 
-/// Discovers LEDIS desktop bridges on the local network (Bonjour `_ledis._tcp`)
+/// Discovers RadFlow desktop bridges on the local network (Bonjour `_ledis._tcp`)
 /// and streams dictated text to the chosen machine over TCP. The desktop
 /// companion types received text at the cursor. This is the entire backend for
 /// the Wireless Remote tab — no WisprFlow dependency.

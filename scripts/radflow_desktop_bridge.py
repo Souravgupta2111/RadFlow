@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-LEDIS Desktop Bridge (Windows / macOS / Linux)
+RadFlow Desktop Bridge (Windows / macOS / Linux)
 ==============================================
 
-Companion for the LEDIS iOS "Wireless Remote" tab.
+Companion for the RadFlow iOS "Wireless Remote" tab.
 
 1. Advertises itself on the local Wi-Fi via Bonjour/Zeroconf (`_ledis._tcp`),
    so the iPhone discovers it automatically — no IP entry needed.
@@ -14,7 +14,7 @@ Companion for the LEDIS iOS "Wireless Remote" tab.
 
 Install & run:
     pip install zeroconf pyautogui pyperclip
-    python3 ledis_desktop_bridge.py
+    python3 radflow_desktop_bridge.py
 
 Notes:
 - macOS: grant Accessibility permission to your terminal (System Settings ->
@@ -38,7 +38,7 @@ except ImportError:
 
 PORT = 48484
 SERVICE_TYPE = "_ledis._tcp.local."
-HOST_LABEL = socket.gethostname().replace(".local", "") or "LEDIS Desktop"
+HOST_LABEL = socket.gethostname().replace(".local", "") or "RadFlow Desktop"
 SERVICE_NAME = f"{HOST_LABEL}._ledis._tcp.local."
 
 pyautogui.FAILSAFE = True  # slam mouse to a screen corner to abort a runaway paste
@@ -79,10 +79,10 @@ def type_at_cursor(text: str) -> None:
             Quartz.CGEventSetFlags(cmd_up, Quartz.kCGEventFlagMaskCommand)
             Quartz.CGEventPost(Quartz.kCGHIDEventTap, cmd_down)
             Quartz.CGEventPost(Quartz.kCGHIDEventTap, cmd_up)
-            print(f"[LEDIS] Pasted via Quartz CGEvents")
+            print(f"[RadFlow] Pasted via Quartz CGEvents")
             return
         except Exception as e:
-            print(f"[LEDIS] Quartz CGEvents failed: {e}")
+            print(f"[RadFlow] Quartz CGEvents failed: {e}")
 
         try:
             # Fallback: AppleScript
@@ -90,10 +90,10 @@ def type_at_cursor(text: str) -> None:
                 "osascript", "-e",
                 'tell application "System Events" to keystroke "v" using command down'
             ], check=True, timeout=3)
-            print(f"[LEDIS] Pasted via osascript")
+            print(f"[RadFlow] Pasted via osascript")
             return
         except Exception as e:
-            print(f"[LEDIS] osascript failed: {e}")
+            print(f"[RadFlow] osascript failed: {e}")
 
     # Last resort: pyautogui
     try:
@@ -106,11 +106,11 @@ def type_at_cursor(text: str) -> None:
         try:
             pyautogui.write(text, interval=0.005)
         except Exception as exc:
-            print(f"[LEDIS] Could not type text: {exc}")
+            print(f"[RadFlow] Could not type text: {exc}")
 
 
 def handle_client(conn: socket.socket, addr) -> None:
-    print(f"[LEDIS] iPhone connected from {addr[0]}")
+    print(f"[RadFlow] iPhone connected from {addr[0]}")
     buffer = b""
     with conn:
         while True:
@@ -132,9 +132,9 @@ def handle_client(conn: socket.socket, addr) -> None:
                 if message.get("type") == "text":
                     text = message.get("text", "")
                     if text:
-                        print(f"[LEDIS] Typing {len(text)} chars at cursor…")
+                        print(f"[RadFlow] Typing {len(text)} chars at cursor…")
                         type_at_cursor(text)
-    print(f"[LEDIS] iPhone {addr[0]} disconnected")
+    print(f"[RadFlow] iPhone {addr[0]} disconnected")
 
 
 def tcp_server() -> None:
@@ -142,7 +142,7 @@ def tcp_server() -> None:
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(("", PORT))
     server.listen(8)
-    print(f"[LEDIS] Listening on 0.0.0.0:{PORT}")
+    print(f"[RadFlow] Listening on 0.0.0.0:{PORT}")
     while True:
         conn, addr = server.accept()
         threading.Thread(target=handle_client, args=(conn, addr), daemon=True).start()
@@ -161,7 +161,7 @@ def advertise() -> tuple[Zeroconf, ServiceInfo]:
     )
     zc.register_service(info)
     print("=" * 56)
-    print(" LEDIS Desktop Bridge")
+    print(" RadFlow Desktop Bridge")
     print(f"  Machine : {HOST_LABEL}")
     print(f"  Address : {ip}:{PORT}")
     print("  Status  : Visible to the iPhone on this Wi-Fi")
@@ -178,7 +178,7 @@ def main() -> None:
     finally:
         zc.unregister_service(info)
         zc.close()
-        print("[LEDIS] Bridge stopped.")
+        print("[RadFlow] Bridge stopped.")
 
 
 if __name__ == "__main__":
