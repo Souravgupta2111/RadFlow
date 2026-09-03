@@ -4,14 +4,12 @@
 # Run this from the root of the project: bash scripts/build_mac_app.sh
 
 echo "Installing PyInstaller and dependencies..."
-python3 -m pip install pyinstaller zeroconf pyautogui pyperclip
+python3 -m pip install pyinstaller zeroconf pyautogui pyperclip --break-system-packages
 
-echo "Building Mac Universal App..."
-# target-architecture universal2 builds for BOTH Apple Silicon and Intel Mac
-pyinstaller --noconfirm --onedir --windowed --name "Radflow Desktop" \
-  --target-architecture universal2 \
+echo "Building Mac App..."
+python3 -m PyInstaller --noconfirm --onedir --windowed --name "Radflow Desktop" \
   --clean \
-  scripts/ledis_desktop_bridge.py
+  scripts/radflow_desktop_bridge.py
 
 echo "Build complete! Your Mac app is located at: dist/Radflow Desktop.app"
 echo "You can double click it to run it in the background."

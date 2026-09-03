@@ -23,8 +23,11 @@ Notes:
 """
 
 import json
+import os
+import plistlib
 import socket
 import struct
+import subprocess
 import sys
 import threading
 
@@ -169,7 +172,56 @@ def advertise() -> tuple[Zeroconf, ServiceInfo]:
     return zc, info
 
 
+def setup_autostart() -> None:
+    """Configures macOS launchd to automatically start this app on login."""
+    if sys.platform != "darwin":
+        return
+        
+    executable_path = sys.executable
+    if not executable_path:
+        return
+        
+    plist_label = "com.radflow.desktop.autostart"
+    launch_agents_dir = os.path.expanduser("~/Library/LaunchAgents")
+    plist_path = os.path.join(launch_agents_dir, f"{plist_label}.plist")
+    
+    os.makedirs(launch_agents_dir, exist_ok=True)
+    
+    # If running from a .app bundle, launch the .app using open -W
+    if "/Contents/MacOS" in executable_path:
+        app_path = executable_path.split("/Contents/MacOS")[0]
+        prog_args = ["/usr/bin/open", "-W", app_path]
+    else:
+        prog_args = [executable_path]
+        
+    plist_content = {
+        "Label": plist_label,
+        "ProgramArguments": prog_args,
+        "RunAtLoad": True,
+        "KeepAlive": True
+    }
+    
+    try:
+        if os.path.exists(plist_path):
+            with open(plist_path, "rb") as f:
+                existing_plist = plistlib.load(f)
+            if existing_plist == plist_content:
+                return  # Already up to date
+    except Exception:
+        pass
+        
+    try:
+        with open(plist_path, "wb") as f:
+            plistlib.dump(plist_content, f)
+        subprocess.run(["launchctl", "unload", plist_path], capture_output=True)
+        subprocess.run(["launchctl", "load", plist_path], capture_output=True)
+        print("[RadFlow] Configured auto-start LaunchAgent.")
+    except Exception as e:
+        print(f"[RadFlow] Failed to set up auto-start: {e}")
+
+
 def main() -> None:
+    setup_autostart()
     zc, info = advertise()
     try:
         tcp_server()
