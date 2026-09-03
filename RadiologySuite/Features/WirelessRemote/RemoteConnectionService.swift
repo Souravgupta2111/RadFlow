@@ -140,9 +140,16 @@ final class RemoteConnectionService: ObservableObject {
 
     /// Sends a line-delimited JSON text frame to the connected desktop.
     func send(text: String) {
-        guard let connection else { return }
+        print("[REMOTE-DEBUG] send(text:) called with: \(text.prefix(80))")
+        guard let connection else {
+            print("[REMOTE-DEBUG] send FAILED — connection is nil")
+            return
+        }
         let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !cleaned.isEmpty else { return }
+        guard !cleaned.isEmpty else {
+            print("[REMOTE-DEBUG] send FAILED — cleaned text is empty")
+            return
+        }
 
         let payload: [String: String] = ["type": "text", "text": cleaned]
         guard let data = try? JSONSerialization.data(withJSONObject: payload) else { return }

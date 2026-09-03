@@ -29,20 +29,31 @@ final class LiveRemoteDictation: ObservableObject {
     }
 
     func stop() {
-        medasr.stop()
-        appleEngine.stop()
+        // Stop audio capture first so no new samples arrive
         audio.stop()
         audio.onSamples = nil
         audio.onPCMBuffer = nil
         audio.levelHandler = nil
         audio.onInterruption = nil
-        medasr.onPartial = nil
-        medasr.onFinal = nil
-        appleEngine.onPartial = nil
-        appleEngine.onFinal = nil
-        isLive = false
-        liveTail = ""
-        level = 0
+        appleEngine.stop()
+        
+        // MedASR.stop() triggers flushFinal() which runs async.
+        // We must keep isLive=true and onFinal alive so the flush
+        // callback can still deliver the last transcribed chunk.
+        medasr.stop()
+        
+        // Give the async flush a moment to complete and fire onFinal,
+        // then clean up.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self else { return }
+            self.medasr.onPartial = nil
+            self.medasr.onFinal = nil
+            self.appleEngine.onPartial = nil
+            self.appleEngine.onFinal = nil
+            self.isLive = false
+            self.liveTail = ""
+            self.level = 0
+        }
     }
 
     // MARK: - Session
@@ -140,11 +151,16 @@ final class LiveRemoteDictation: ObservableObject {
     // MARK: - Deliver
 
     private func deliver(_ raw: String) {
+        print("[DICTATION-DEBUG] deliver() called with raw: \(raw.prefix(80))")
         let cleaned = LiveReportFormatter.format(raw).trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !cleaned.isEmpty else { return }
+        guard !cleaned.isEmpty else {
+            print("[DICTATION-DEBUG] deliver() — cleaned text is empty, skipping")
+            return
+        }
         liveTail = ""
         typedLog.insert(cleaned, at: 0)
         if typedLog.count > 6 { typedLog.removeLast() }
+        print("[DICTATION-DEBUG] calling conn?.send(text:) with: \(cleaned.prefix(80)), conn is \(conn == nil ? "nil" : "set")")
         conn?.send(text: cleaned)
         DS.haptic(.light)
     }

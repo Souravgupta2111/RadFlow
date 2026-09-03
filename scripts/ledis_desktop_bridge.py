@@ -37,8 +37,8 @@ except ImportError:
     sys.exit("Missing deps. Run:  pip install zeroconf pyautogui pyperclip")
 
 PORT = 48484
-SERVICE_TYPE = "_ledis._tcp."
-HOST_LABEL = socket.gethostname() or "LEDIS Desktop"
+SERVICE_TYPE = "_ledis._tcp.local."
+HOST_LABEL = socket.gethostname().replace(".local", "") or "LEDIS Desktop"
 SERVICE_NAME = f"{HOST_LABEL}._ledis._tcp.local."
 
 pyautogui.FAILSAFE = True  # slam mouse to a screen corner to abort a runaway paste
@@ -61,6 +61,41 @@ def type_at_cursor(text: str) -> None:
     """Paste at the cursor (fast, unicode-safe); fall back to typing.
     A trailing space keeps consecutive spoken chunks separated naturally."""
     text = text + " "
+    # Step 1: copy to clipboard
+    import subprocess
+    proc = subprocess.Popen(["pbcopy"], stdin=subprocess.PIPE)
+    proc.communicate(text.encode("utf-8"))
+
+    # Step 2: simulate Cmd+V
+    if sys.platform == "darwin":
+        try:
+            # Use Quartz CGEvents — most reliable on modern macOS
+            import Quartz
+            src = Quartz.CGEventSourceCreate(Quartz.kCGEventSourceStateHIDSystemState)
+            # Key code 9 = 'v'
+            cmd_down = Quartz.CGEventCreateKeyboardEvent(src, 9, True)
+            cmd_up = Quartz.CGEventCreateKeyboardEvent(src, 9, False)
+            Quartz.CGEventSetFlags(cmd_down, Quartz.kCGEventFlagMaskCommand)
+            Quartz.CGEventSetFlags(cmd_up, Quartz.kCGEventFlagMaskCommand)
+            Quartz.CGEventPost(Quartz.kCGHIDEventTap, cmd_down)
+            Quartz.CGEventPost(Quartz.kCGHIDEventTap, cmd_up)
+            print(f"[LEDIS] Pasted via Quartz CGEvents")
+            return
+        except Exception as e:
+            print(f"[LEDIS] Quartz CGEvents failed: {e}")
+
+        try:
+            # Fallback: AppleScript
+            subprocess.run([
+                "osascript", "-e",
+                'tell application "System Events" to keystroke "v" using command down'
+            ], check=True, timeout=3)
+            print(f"[LEDIS] Pasted via osascript")
+            return
+        except Exception as e:
+            print(f"[LEDIS] osascript failed: {e}")
+
+    # Last resort: pyautogui
     try:
         pyperclip.copy(text)
         if sys.platform == "darwin":
