@@ -8,6 +8,7 @@ enum SupabaseConfig {
     /// Auth endpoints
     static var signUpURL: URL { URL(string: "\(projectURL)/auth/v1/signup")! }
     static var signInURL: URL { URL(string: "\(projectURL)/auth/v1/token?grant_type=id_token")! }
+    static var refreshTokenURL: URL { URL(string: "\(projectURL)/auth/v1/token?grant_type=refresh_token")! }
     static var signOutURL: URL { URL(string: "\(projectURL)/auth/v1/logout")! }
     static var userURL: URL { URL(string: "\(projectURL)/auth/v1/user")! }
 

@@ -216,17 +216,60 @@ final class AuthService: NSObject, ObservableObject {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = SupabaseConfig.authHeaders(accessToken: token)
 
-        guard let (data, response) = try? await URLSession.shared.data(for: request),
-              let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            // Token might be expired — clear session
-            if accessToken != nil { clearSession() }
-            return
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let http = response as? HTTPURLResponse else { return }
+            
+            if (200...299).contains(http.statusCode) {
+                if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    userEmail = json["email"] as? String
+                    userId = json["id"] as? String
+                    UserDefaults.standard.set(userEmail, forKey: "supabase.userEmail")
+                    isSignedIn = true
+                }
+            } else if http.statusCode == 401 || http.statusCode == 403 {
+                // Token might be expired, try to refresh it
+                let refreshed = await refreshSession()
+                if !refreshed {
+                    clearSession()
+                }
+            }
+        } catch {
+            // Network error (no internet, timeout, etc) - DO NOT LOG OUT
+            print("Auth fetch error: \(error)")
         }
-        userEmail = json["email"] as? String
-        userId = json["id"] as? String
-        UserDefaults.standard.set(userEmail, forKey: "supabase.userEmail")
-        isSignedIn = true
+    }
+    
+    private func refreshSession() async -> Bool {
+        guard let refresh = refreshToken else { return false }
+        var request = URLRequest(url: SupabaseConfig.refreshTokenURL)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = SupabaseConfig.baseHeaders
+        let body: [String: Any] = ["refresh_token": refresh]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+                return false
+            }
+            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
+            if let newAccess = json["access_token"] as? String,
+               let newRefresh = json["refresh_token"] as? String {
+                self.accessToken = newAccess
+                self.refreshToken = newRefresh
+                
+                if let user = json["user"] as? [String: Any] {
+                    self.userId = user["id"] as? String
+                    self.userEmail = user["email"] as? String
+                    UserDefaults.standard.set(self.userEmail, forKey: "supabase.userEmail")
+                }
+                return true
+            }
+        } catch {
+            print("Refresh token error: \(error)")
+        }
+        return false
     }
 
     // MARK: - Helpers
